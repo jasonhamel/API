@@ -28,20 +28,11 @@ app.post("/", async (req, res) => {
   let type = req.body.type;
   let participants = req.body.participants;
 
-  let baseUrl = "https://bored-api.appbrewery.com/filter";
-  if (type != "" || participants != "") {
-    baseUrl += "?";
-  }
-
-  if (type != "") {
-    baseUrl += "type=" + type;
-  }
-  if (type != "" && participants != "") {
-    baseUrl += "&";
-  }
-  if (participants != "") {
-    baseUrl += "participants=" + participants;
-  }
+  let baseUrl =
+    "https://bored-api.appbrewery.com/filter?type=" +
+    type +
+    "&participants=" +
+    participants;
 
   try {
     const response = await axios.get(baseUrl);
