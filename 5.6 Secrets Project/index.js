@@ -21,9 +21,8 @@ app.use(express.static("public"));
 app.get("/", async (req, res) => {
   try {
     const request = await axios("https://secrets-api.appbrewery.com/random");
-    const response = request.data;
-    let secret = response.secret;
-    let userName = response.username;
+    let secret = request.data.secret;
+    let userName = request.data.username;
 
     res.render("index.ejs", {
       secret: secret,
