@@ -1,0 +1,54 @@
+<%- include("partials/header.ejs") %>
+<h1>Not Jeopardy</h1>
+<div class="board">
+  <div class="category-row">
+    <div class="title-box"><h3>History</h3></div>
+    <div class="title-box"><h3>Music</h3></div>
+    <div class="title-box"><h3>Science</h3></div>
+    <div class="title-box"><h3>Geography</h3></div>
+    <div class="title-box"><h3>Film & TV</h3></div>
+  </div>
+  <div class="question-rows">
+    <div class="column">
+      <% for (let i = 0; i < 3; i++) { %>
+      <form action="/question" method="POST">
+        <button type="submit" value="<%= i %>" name="question">
+          <div class="new-box" id="<%= i%>">
+            <p><%= i + 1%>00</p>
+          </div>
+        </button>
+      </form>
+
+      <% } %>
+    </div>
+    <div class="column">
+      <% for (let i = 0; i < 3; i++) { %>
+      <div class="question-box" id="music-<%= i + 1%>00">
+        <p><%= i + 1%>00</p>
+      </div>
+      <% } %>
+    </div>
+    <div class="column">
+      <% for (let i = 0; i < 3; i++) { %>
+      <div class="question-box" id="science-<%= i + 1%>00">
+        <p><%= i + 1%>00</p>
+      </div>
+      <% } %>
+    </div>
+    <div class="column">
+      <% for (let i = 0; i < 3; i++) { %>
+      <div class="question-box" id="geography-<%= i + 1%>00">
+        <p><%= i + 1%>00</p>
+      </div>
+      <% } %>
+    </div>
+    <div class="column">
+      <% for (let i = 0; i < 3; i++) { %>
+      <div class="question-box" id="film-tv-<%= i + 1%>00">
+        <p><%= i + 1%>00</p>
+      </div>
+      <% } %>
+    </div>
+  </div>
+</div>
+<%- include("partials/footer.ejs") %>
