@@ -1,0 +1,16 @@
+<%- include("partials/header.ejs") %>
+<h1>Not Jeopardy</h1>
+<div class="question-text">
+  <div class="question-text">
+    <p><%=question%></p>
+  </div>
+  <div>
+    <form action="/check" type="POST">
+      <input name="userAnswer" />
+      <button type="submit" value="<%=answer%>" name="answer">
+        Submit Answer
+      </button>
+    </form>
+  </div>
+</div>
+<%- include("partials/header.ejs") %>

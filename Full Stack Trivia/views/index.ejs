@@ -11,7 +11,7 @@
   <div class="question-rows">
     <div class="column">
       <% for (let i = 0; i < 3; i++) { %>
-      <form action="/question" method="POST">
+      <form action="/question" method="post">
         <button type="submit" value="<%= i %>" name="question">
           <div class="new-box" id="<%= i%>">
             <p><%= i + 1%>00</p>

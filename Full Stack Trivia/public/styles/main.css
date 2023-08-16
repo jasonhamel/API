@@ -60,3 +60,9 @@ h1 {
   width: 200px;
   height: 150px;
 }
+
+.question-text {
+  background-color: aqua;
+  text-align: center;
+  display: flex;
+}

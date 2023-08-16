@@ -113,10 +113,31 @@ app.get("/", async (req, res) => {
   }
 });
 
+app.get("/question", (req, res) => {
+  console.log(req.body);
+  res.render("index.ejs");
+});
+
+app.get("/check", (req, res) => {
+  let userAnswer = req.query.userAnswer;
+  let answer = req.query.answer;
+  console.log(userAnswer.toUpperCase());
+  console.log(answer.toUpperCase());
+  console.log(userAnswer.toUpperCase() === answer.toUpperCase());
+  if (userAnswer.toUpperCase() === answer.toUpperCase()) {
+    console.log("YES");
+  } else {
+    console.log("NO");
+  }
+  res.render("index.ejs");
+});
+
 app.post("/question", (req, res) => {
   const currentQuestion = req.body.question;
-
-  res.render("index.ejs");
+  res.render("question.ejs", {
+    question: board[currentQuestion].question,
+    answer: board[currentQuestion].answer,
+  });
 });
 
 app.listen(3000, () => {
