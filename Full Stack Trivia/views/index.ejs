@@ -25,31 +25,47 @@
       <% } %>
     </div>
     <div class="column">
-      <% for (let i = 0; i < 3; i++) { %>
-      <div class="question-box" id="music-<%= i + 1%>00">
-        <p><%= i + 1%>00</p>
-      </div>
+      <% for (let i = 3; i < 6; i++) { %>
+      <form action="/question" method="post">
+        <button type="submit" value="<%= i %>" name="question">
+          <div class="new-box" id="<%= i%>">
+            <p><%= i - 2%>00</p>
+          </div>
+        </button>
+      </form>
       <% } %>
     </div>
     <div class="column">
-      <% for (let i = 0; i < 3; i++) { %>
-      <div class="question-box" id="science-<%= i + 1%>00">
-        <p><%= i + 1%>00</p>
-      </div>
+      <% for (let i = 6; i < 9; i++) { %>
+      <form action="/question" method="post">
+        <button type="submit" value="<%= i %>" name="question">
+          <div class="new-box" id="<%= i%>">
+            <p><%= i - 5%>00</p>
+          </div>
+        </button>
+      </form>
       <% } %>
     </div>
     <div class="column">
-      <% for (let i = 0; i < 3; i++) { %>
-      <div class="question-box" id="geography-<%= i + 1%>00">
-        <p><%= i + 1%>00</p>
-      </div>
+      <% for (let i = 9; i < 12; i++) { %>
+      <form action="/question" method="post">
+        <button type="submit" value="<%= i %>" name="question">
+          <div class="new-box" id="<%= i%>">
+            <p><%= i - 8%>00</p>
+          </div>
+        </button>
+      </form>
       <% } %>
     </div>
     <div class="column">
-      <% for (let i = 0; i < 3; i++) { %>
-      <div class="question-box" id="film-tv-<%= i + 1%>00">
-        <p><%= i + 1%>00</p>
-      </div>
+      <% for (let i = 12; i < 15; i++) { %>
+      <form action="/question" method="post">
+        <button type="submit" value="<%= i %>" name="question">
+          <div class="new-box" id="<%= i%>">
+            <p><%= i - 11%>00</p>
+          </div>
+        </button>
+      </form>
       <% } %>
     </div>
   </div>

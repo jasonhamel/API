@@ -148,6 +148,9 @@ app.get("/question", (req, res) => {
 
 app.post("/question", (req, res) => {
   chosenQuestion = req.body.question;
+  if (board[chosenQuestion] == null) {
+    res.redirect("/");
+  }
   res.render("question.ejs", {
     question: board[chosenQuestion].question,
   });
@@ -166,13 +169,13 @@ app.get("/check", (req, res) => {
       player2Score += board[chosenQuestion].score;
     }
   } else {
-    console.log("WRONG ANSWER");
     if (playerTurn == 1) {
       playerTurn = 2;
     } else {
       playerTurn = 1;
     }
   }
+  board[chosenQuestion] = null;
   res.redirect("/");
 });
 
