@@ -30,6 +30,13 @@ h1 {
   gap: 2rem;
 }
 
+.score {
+  display: flex;
+  background-color: aqua;
+  margin-bottom: 2rem;
+  padding: 0.3rem 1rem 0.3rem 1rem;
+}
+
 .question-rows {
   display: flex;
   gap: 2rem;
