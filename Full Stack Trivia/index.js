@@ -8,6 +8,7 @@ let chosenQuestion;
 let player1Score = 0;
 let player2Score = 0;
 let playerTurn = 1;
+let test = "Jason";
 
 app.set("view engine", "ejs");
 app.use(express.static("public"));
