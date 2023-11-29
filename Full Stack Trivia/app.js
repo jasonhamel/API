@@ -8,14 +8,18 @@ const rl = readline.createInterface({
 });
 
 let board = [];
-let chosenQuestion;
 let player1Score = 0;
 let player2Score = 0;
 let playerTurn = 1;
 
 await startApp();
-showState();
-await showBoard();
+
+while (true) {
+  showState();
+  await showBoard();
+  await chooseAQuestion();
+  break;
+}
 
 async function startApp() {
   board = await axios.get(url);
@@ -33,7 +37,7 @@ async function startApp() {
     );
     await rl.question("\nPress enter to continue");
   }
-  rl.close();
+  rl.pause();
 }
 
 function showState() {
@@ -43,7 +47,7 @@ function showState() {
 
 async function showBoard() {
   console.log(
-    "| **History** | **Music** | **Science** | **Geography** | **Film and TV** |"
+    "| **HISTORY** | **MUSIC** | **SCIENCE** | **GEOGRAPHY** | **FILM AND TV** |"
   );
   console.log(
     "|     " +
@@ -84,4 +88,77 @@ async function showBoard() {
       board[14].score +
       "       |"
   );
+}
+
+async function chooseAQuestion() {
+  let chosenQuestion;
+  rl.resume();
+  let chosenCategory = await rl.question(
+    "Please choose a category by typing in its name:\n\t"
+  );
+  chosenCategory = chosenCategory.toUpperCase();
+  if (
+    chosenCategory == "HISTORY" ||
+    chosenCategory == "MUSIC" ||
+    chosenCategory == "SCIENCE" ||
+    chosenCategory == "GEOGRAPHY" ||
+    chosenCategory == "FILM AND TV"
+  ) {
+    chosenQuestion = await rl.question(
+      "Please choose either 100, 200, or 300:\n\t"
+    );
+    if (
+      chosenQuestion == "100" ||
+      chosenQuestion == "200" ||
+      chosenQuestion == "300"
+    ) {
+      rl.pause();
+      const checkQuestion = questionValid(chosenCategory, chosenQuestion);
+      if (checkQuestion != null) {
+        console.log(checkQuestion);
+        //ask question, return true if correct
+        //if correct add score to score
+        //mark question as null
+        return;
+      } else {
+        await chooseAQuestion();
+      }
+    } else {
+      console.log("Your entry was invalid. Please try again");
+      await chooseAQuestion();
+    }
+  } else {
+    console.log("Your entry was invalid. Please try again");
+    await chooseAQuestion();
+    rl.pause();
+  }
+}
+
+async function questionValid(category, question) {
+  let index = 0;
+  if (category == "HISTORY") {
+    index += 0;
+  } else if (category == "MUSIC") {
+    index += 3;
+  } else if (category == "SCIENCE") {
+    index += 6;
+  } else if (category == "GEOGRAPHY") {
+    index += 9;
+  } else if (category == "FILM AND TV") {
+    index += 12;
+  }
+
+  if (question == "100") {
+    index += 0;
+  } else if (question == "200") {
+    index += 1;
+  } else if (question == "300") {
+    index += 2;
+  }
+
+  if (board[index] != null) {
+    return index;
+  }
+
+  return null;
 }
