@@ -11,14 +11,19 @@ let board = [];
 let player1Score = 0;
 let player2Score = 0;
 let playerTurn = 1;
+let loopcount = 0;
 
 await startApp();
 
 while (true) {
-  showState();
+  console.log("It's player" + playerTurn + "'s turn");
+  await showState();
   await showBoard();
   await chooseAQuestion();
-  break;
+  loopcount++;
+  if (loopcount > 14) {
+    break;
+  }
 }
 
 async function startApp() {
@@ -40,7 +45,7 @@ async function startApp() {
   rl.pause();
 }
 
-function showState() {
+async function showState() {
   console.log("\n\n\tPlayer 1 score: " + player1Score);
   console.log("\n\n\tPlayer 2 score: " + player2Score + "\n\n");
 }
@@ -113,14 +118,41 @@ async function chooseAQuestion() {
       chosenQuestion == "300"
     ) {
       rl.pause();
-      const checkQuestion = questionValid(chosenCategory, chosenQuestion);
+      const checkQuestion = await questionValid(chosenCategory, chosenQuestion);
       if (checkQuestion != null) {
-        console.log(checkQuestion);
-        //ask question, return true if correct
-        //if correct add score to score
-        //mark question as null
+        rl.resume();
+        let userAnswer = await rl.question(
+          board[checkQuestion].question + "\n\t"
+        );
+        userAnswer = userAnswer.toUpperCase();
+        const answer = board[checkQuestion].answer.toUpperCase();
+        if (userAnswer === answer) {
+          console.log(
+            "CORRECT! That's worth " + board[checkQuestion].score + " points"
+          );
+          if (playerTurn === 1) {
+            player1Score += board[checkQuestion].score;
+          } else {
+            player2Score += board[checkQuestion].score;
+          }
+        } else {
+          console.log(
+            "WRONG! The correct answer was:\n\t" + board[checkQuestion].answer
+          );
+          if (playerTurn === 1) {
+            playerTurn = 2;
+          } else {
+            playerTurn = 1;
+          }
+        }
+
+        board[checkQuestion].score = "N/A";
+        board[checkQuestion].valid = false;
         return;
       } else {
+        console.log(
+          "This question has already been asked. Please choose another"
+        );
         await chooseAQuestion();
       }
     } else {
@@ -156,7 +188,7 @@ async function questionValid(category, question) {
     index += 2;
   }
 
-  if (board[index] != null) {
+  if (board[index].valid) {
     return index;
   }
 
