@@ -141,6 +141,7 @@ class Scoreboard {
           question: this.response[0].question.text,
           answer: this.response[0].correctAnswer,
           score: this.score,
+          category: this.categories.slice(11),
           valid: this.valid,
         });
       }

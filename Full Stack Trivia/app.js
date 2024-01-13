@@ -7,7 +7,7 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
-let board = [];
+const board = new Map();
 let player1Score = 0;
 let player2Score = 0;
 let playerTurn = 1;
@@ -26,9 +26,12 @@ while (true) {
   }
 }
 
+console.log("Game Over");
+
 async function startApp() {
-  board = await axios.get(url);
-  board = board.data;
+  let results = await axios.get(url);
+  setBoard(results.data);
+
   const rulesAnswer = await rl.question(
     "Welcome to Not Jeopardy! The trivia game that looks vaguely familiar, but with slightly different rules.\nDo you want to see the rules before continuing? Please enter y or yes to see the rules\n"
   );
@@ -56,43 +59,64 @@ async function showBoard() {
   );
   console.log(
     "|     " +
-      board[0].score +
+      board.get("HISTORY").get("100").score +
       "     |    " +
-      board[3].score +
+      board.get("MUSIC").get("100").score +
       "    |     " +
-      board[6].score +
+      board.get("SCIENCE").get("100").score +
       "     |      " +
-      board[9].score +
+      board.get("GEOGRAPHY").get("100").score +
       "      |       " +
-      board[12].score +
+      board.get("FILM AND TV").get("100").score +
       "       |"
   );
   console.log(
     "|     " +
-      board[1].score +
+      board.get("HISTORY").get("200").score +
       "     |    " +
-      board[4].score +
+      board.get("MUSIC").get("200").score +
       "    |     " +
-      board[7].score +
+      board.get("SCIENCE").get("200").score +
       "     |      " +
-      board[10].score +
+      board.get("GEOGRAPHY").get("200").score +
       "      |       " +
-      board[13].score +
+      board.get("FILM AND TV").get("200").score +
       "       |"
   );
   console.log(
     "|     " +
-      board[2].score +
+      board.get("HISTORY").get("300").score +
       "     |    " +
-      board[5].score +
+      board.get("MUSIC").get("300").score +
       "    |     " +
-      board[8].score +
+      board.get("SCIENCE").get("300").score +
       "     |      " +
-      board[11].score +
+      board.get("GEOGRAPHY").get("300").score +
       "      |       " +
-      board[14].score +
+      board.get("FILM AND TV").get("300").score +
       "       |"
   );
+}
+
+async function setBoard(results) {
+  const history = new Map();
+  const music = new Map();
+  const science = new Map();
+  const geography = new Map();
+  const filmAndTV = new Map();
+
+  for (let i = 1; i < 4; i++) {
+    history.set(i + "00", results[i - 1]);
+    music.set(i + "00", results[i + 2]);
+    science.set(i + "00", results[i + 5]);
+    geography.set(i + "00", results[i + 8]);
+    filmAndTV.set(i + "00", results[i + 11]);
+  }
+  board.set("HISTORY", history);
+  board.set("MUSIC", music);
+  board.set("SCIENCE", science);
+  board.set("GEOGRAPHY", geography);
+  board.set("FILM AND TV", filmAndTV);
 }
 
 async function chooseAQuestion() {
@@ -102,95 +126,79 @@ async function chooseAQuestion() {
     "Please choose a category by typing in its name:\n\t"
   );
   chosenCategory = chosenCategory.toUpperCase();
-  if (
-    chosenCategory == "HISTORY" ||
-    chosenCategory == "MUSIC" ||
-    chosenCategory == "SCIENCE" ||
-    chosenCategory == "GEOGRAPHY" ||
-    chosenCategory == "FILM AND TV"
-  ) {
-    chosenQuestion = await rl.question(
-      "Please choose either 100, 200, or 300:\n\t"
-    );
-    if (
-      chosenQuestion == "100" ||
-      chosenQuestion == "200" ||
-      chosenQuestion == "300"
-    ) {
-      rl.pause();
-      const checkQuestion = await questionValid(chosenCategory, chosenQuestion);
-      if (checkQuestion != null) {
-        rl.resume();
-        let userAnswer = await rl.question(
-          board[checkQuestion].question + "\n\t"
-        );
-        userAnswer = userAnswer.toUpperCase();
-        const answer = board[checkQuestion].answer.toUpperCase();
-        if (userAnswer === answer) {
-          console.log(
-            "CORRECT! That's worth " + board[checkQuestion].score + " points"
-          );
-          if (playerTurn === 1) {
-            player1Score += board[checkQuestion].score;
-          } else {
-            player2Score += board[checkQuestion].score;
-          }
-        } else {
-          console.log(
-            "WRONG! The correct answer was:\n\t" + board[checkQuestion].answer
-          );
-          if (playerTurn === 1) {
-            playerTurn = 2;
-          } else {
-            playerTurn = 1;
-          }
-        }
+  chosenQuestion = await rl.question(
+    "Please choose either 100, 200, or 300:\n\t"
+  );
+  rl.pause();
+  const checkQuestion = await questionValid(chosenCategory, chosenQuestion);
 
-        board[checkQuestion].score = "N/A";
-        board[checkQuestion].valid = false;
-        return;
-      } else {
-        console.log(
-          "This question has already been asked. Please choose another"
-        );
-        await chooseAQuestion();
-      }
-    } else {
-      console.log("Your entry was invalid. Please try again");
-      await chooseAQuestion();
-    }
-  } else {
-    console.log("Your entry was invalid. Please try again");
+  if (await askQuestion(checkQuestion)) {
     await chooseAQuestion();
-    rl.pause();
   }
 }
 
 async function questionValid(category, question) {
-  let index = 0;
-  if (category == "HISTORY") {
-    index += 0;
-  } else if (category == "MUSIC") {
-    index += 3;
-  } else if (category == "SCIENCE") {
-    index += 6;
-  } else if (category == "GEOGRAPHY") {
-    index += 9;
-  } else if (category == "FILM AND TV") {
-    index += 12;
+  if (!board.has(category)) {
+    return null;
   }
 
-  if (question == "100") {
-    index += 0;
-  } else if (question == "200") {
-    index += 1;
-  } else if (question == "300") {
-    index += 2;
+  if (!board.get(category).has(question)) {
+    return null;
   }
 
-  if (board[index].valid) {
-    return index;
+  return board.get(category).get(question);
+}
+
+async function checkAnswer(checkQuestion) {
+  rl.resume();
+  let userAnswer = await rl.question(checkQuestion.question + "\n\t");
+  userAnswer = userAnswer.toUpperCase();
+  const answer = checkQuestion.answer.toUpperCase();
+  if (userAnswer === answer) {
+    addScore(checkQuestion.score);
+    return;
+  }
+  await changePlayer(checkQuestion.answer);
+}
+
+async function changePlayer(answer) {
+  console.log("WRONG! The correct answer was:\n\t" + answer);
+  if (playerTurn === 1) {
+    playerTurn = 2;
+  } else {
+    playerTurn = 1;
+  }
+}
+
+async function addScore(score) {
+  console.log("CORRECT! That's worth " + score + " points");
+  if (playerTurn === 1) {
+    player1Score += score;
+  } else {
+    player2Score += score;
+  }
+}
+
+async function setQuestionVoid(checkQuestion) {
+  let cat = checkQuestion.category.toUpperCase();
+  cat = cat.replace(/_/g, " ");
+  const string = checkQuestion.score.toString();
+  const score = board.get(cat).get(string);
+  score.score = "N/A";
+  score.valid = false;
+}
+
+async function askQuestion(checkQuestion) {
+  if (checkQuestion == null) {
+    console.log("PLEASE ENTER A VALID CATEGORY AND QUESTION");
+    return;
   }
 
-  return null;
+  if (checkQuestion.valid) {
+    await checkAnswer(checkQuestion);
+    await setQuestionVoid(checkQuestion);
+  } else {
+    console.log("This question has already been asked. Please choose another");
+    return false;
+  }
 }
